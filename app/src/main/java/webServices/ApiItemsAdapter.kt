@@ -13,27 +13,14 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.recycler_view_items_retrofit.view.*
 
 /** Adapter recyclerview */
-class ApiItemsAdapter(val context: Context, private val userData: List<Data>) :
+class ApiItemsAdapter(val context: Context, private val userData: List<Data>, private val mListene: ((Int) -> Unit)) :
     RecyclerView.Adapter<ApiItemsAdapter.ViewHolder>() {
-
-    /** Instance variable */
-    private lateinit var mListener: OnItemClickListener
-
-    /** Interface */
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
-    }
-
-    /** Function */
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        mListener = listener
-    }
 
     /** Adapter overridden methods*/
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater
             .from(context)
-            .inflate(R.layout.recycler_view_items_retrofit, parent,false), mListener
+            .inflate(R.layout.recycler_view_items_retrofit, parent,false)
         )
     }
 
@@ -50,7 +37,7 @@ class ApiItemsAdapter(val context: Context, private val userData: List<Data>) :
     }
 
     /** Class to set Views */
-    class ViewHolder(view: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val title: TextView = view.title
         val subtitle: TextView = view.subtitle
@@ -58,7 +45,7 @@ class ApiItemsAdapter(val context: Context, private val userData: List<Data>) :
         val layout: LinearLayout = view.layout
         init {
             view.setOnClickListener {
-                listener.onItemClick(adapterPosition)
+                mListene(adapterPosition)
             }
         }
 

@@ -42,19 +42,16 @@ class ListUsers : AppCompatActivity() {
                 binding.progressbar.visibility = View.GONE
                 response.body()?.let {
                     val responseBody = it
-                    adapter = ApiItemsAdapter(this@ListUsers, responseBody.usersList)
+                    adapter = ApiItemsAdapter(this@ListUsers, responseBody.usersList) { position ->
+                        val intent = Intent(this@ListUsers, SingleUserPage::class.java)
+                        intent.putExtra("idUser", responseBody.usersList[position].id);
+                        startActivity(intent)
+                        Toast.makeText(this@ListUsers,
+                            "You have clicked on ${responseBody.usersList[position].id}",
+                            Toast.LENGTH_SHORT).show()
+                    }
                     binding.listItems.adapter = adapter
-                    binding.listItems.layoutManager = LinearLayoutManager(this@ListUsers)
-                    adapter.setOnItemClickListener(object : ApiItemsAdapter.OnItemClickListener {
-                        override fun onItemClick(position: Int) {
-                            val intent = Intent(this@ListUsers, SingleUserPage::class.java)
-                            intent.putExtra("idUser", responseBody.usersList[position].id);
-                            startActivity(intent)
-                            Toast.makeText(this@ListUsers,
-                                "You have clicked on ${responseBody.usersList[position].id}",
-                                Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                    binding.listItems.layoutManager = LinearLayoutManager( this@ListUsers)
                 }
             }
         })

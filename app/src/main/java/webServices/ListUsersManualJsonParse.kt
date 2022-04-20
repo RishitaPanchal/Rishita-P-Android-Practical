@@ -43,26 +43,28 @@ class ListUsersManualJsonParse : AppCompatActivity() {
                 Log.e("tag","Failure")
             }
             override fun onResponse(call: Call, response: Response) {
-                val responseStatus = response.body()!!.string()
-                val jsonContact= JSONObject(responseStatus)
-                val jsonarrayInfo: JSONArray= jsonContact.getJSONArray("data")
-                usersDetails = ArrayList()
-                for(i in 0 until jsonarrayInfo.length()) {
-                    val jsonObjectDetails: JSONObject = jsonarrayInfo.getJSONObject(i)
-                    val dataClass = Data()
-                    dataClass.id = jsonObjectDetails.getInt("id")
-                    dataClass.email = jsonObjectDetails.getString("email")
-                    dataClass.firstName = jsonObjectDetails.getString("first_name")
-                    dataClass.lastName = jsonObjectDetails.getString("last_name")
-                    dataClass.avatar = jsonObjectDetails.getString("avatar")
-                    usersDetails.add(dataClass)
+                response.body()?.let {
+                    val responseStatus = it.string()
+                    val jsonContact= JSONObject(responseStatus)
+                    val jsonarrayInfo: JSONArray= jsonContact.getJSONArray("data")
+                    usersDetails = ArrayList()
+                    for(i in 0 until jsonarrayInfo.length()) {
+                        val jsonObjectDetails: JSONObject = jsonarrayInfo.getJSONObject(i)
+                        val dataClass = Data()
+                        dataClass.id = jsonObjectDetails.getInt("id")
+                        dataClass.email = jsonObjectDetails.getString("email")
+                        dataClass.firstName = jsonObjectDetails.getString("first_name")
+                        dataClass.lastName = jsonObjectDetails.getString("last_name")
+                        dataClass.avatar = jsonObjectDetails.getString("avatar")
+                        usersDetails.add(dataClass)
+                    }
+                    runOnUiThread {
+                        adapter = ApiItemsAdapterList(this@ListUsersManualJsonParse, usersDetails)
+                        binding.listItems.adapter = adapter
+                        binding.listItems.layoutManager = LinearLayoutManager(this@ListUsersManualJsonParse)
+                    }
                 }
-                Log.e("data","$usersDetails")
-                runOnUiThread {
-                    adapter = ApiItemsAdapterList(this@ListUsersManualJsonParse, usersDetails)
-                    binding.listItems.adapter = adapter
-                    binding.listItems.layoutManager = LinearLayoutManager(this@ListUsersManualJsonParse)
-                }
+
             }
         })
     }
